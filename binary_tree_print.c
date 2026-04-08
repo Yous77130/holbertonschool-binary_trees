@@ -6,12 +6,10 @@
 static void print_node(const binary_tree_t *node, int offset, int depth, char **s)
 {
 	char b[6];
-	int left, right, is_left, start, i;
+	int is_left, start, i;
 
 	if (!node)
 		return;
-	left = node->left ? 1 : 0;
-	right = node->right ? 1 : 0;
 	is_left = node->parent && node->parent->left == node;
 	snprintf(b, sizeof(b), "(%03d)", node->n);
 	start = offset - 3 + (is_left ? 1 : 0);
@@ -28,6 +26,17 @@ static void print_node(const binary_tree_t *node, int offset, int depth, char **
 	print_node(node->right, offset + 4, depth + 1, s);
 }
 
+static int height(const binary_tree_t *tree)
+{
+	int l, r;
+
+	if (!tree)
+		return (0);
+	l = height(tree->left);
+	r = height(tree->right);
+	return (1 + (l > r ? l : r));
+}
+
 void binary_tree_print(const binary_tree_t *tree)
 {
 	char **s;
@@ -35,14 +44,7 @@ void binary_tree_print(const binary_tree_t *tree)
 
 	if (!tree)
 		return;
-	h = 0;
-	{
-		const binary_tree_t *tmp = tree;
-		while (tmp)
-		{			h++;
-			tmp = tmp->left;
-		}
-	}
+	h = height(tree);
 	s = malloc(sizeof(*s) * h);
 	for (i = 0; i < h; i++)
 	{
